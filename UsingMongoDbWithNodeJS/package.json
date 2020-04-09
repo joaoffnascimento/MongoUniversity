@@ -1,0 +1,15 @@
+{
+  "name": "usingmongodbwithnodejs",
+  "version": "1.0.0",
+  "description": "Mongodb native driver",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "João Felipe",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "mongodb": "^3.5.5"
+  }
+}
