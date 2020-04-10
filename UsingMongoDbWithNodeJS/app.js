@@ -34,32 +34,38 @@ async function main() {
         assert.deepEqual(byId, getData[4])
 
         let newItem = {
-            "Newspaper": "Jornal Hoje Brasil",
-            "Daily Circulation, 2004": 1,
-            "Daily Circulation, 2013": 2,
-            "Change in Daily Circulation, 2004-2013": 100,
-            "Pulitzer Prize Winners and Finalists, 1990-2003": 0,
-            "Pulitzer Prize Winners and Finalists, 2004-2004": 0,
-            "Pulitzer Prize Winners and Finalists, 1990-2004": 0
+            'Newspaper': 'Jornal Hoje Brasil',
+            'Daily Circulation, 2004': 1,
+            'Daily Circulation, 2013': 2,
+            'Change in Daily Circulation, 2004-2013': 100,
+            'Pulitzer Prize Winners and Finalists, 1990-2003': 0,
+            'Pulitzer Prize Winners and Finalists, 2004-2004': 0,
+            'Pulitzer Prize Winners and Finalists, 1990-2004': 0
         }
         const addedItem = await circulationRepo.addItem(newItem)
         assert(addedItem._id)
 
         const updateItem = await circulationRepo.update(addedItem._id, {
-            "Newspaper": "Jornal Ontem Brasil",
-            "Daily Circulation, 2004": 1,
-            "Daily Circulation, 2013": 2,
-            "Change in Daily Circulation, 2004-2013": 100,
-            "Pulitzer Prize Winners and Finalists, 1990-2003": 0,
-            "Pulitzer Prize Winners and Finalists, 2004-2004": 0,
-            "Pulitzer Prize Winners and Finalists, 1990-2004": 0
+            'Newspaper': 'Jornal Ontem Brasil',
+            'Daily Circulation, 2004': 1,
+            'Daily Circulation, 2013': 2,
+            'Change in Daily Circulation, 2004-2013': 100,
+            'Pulitzer Prize Winners and Finalists, 1990-2003': 0,
+            'Pulitzer Prize Winners and Finalists, 2004-2004': 0,
+            'Pulitzer Prize Winners and Finalists, 1990-2004': 0
         })
-        assert.equal(updateItem.Newspaper, "Jornal Ontem Brasil")
+        assert.equal(updateItem.Newspaper, 'Jornal Ontem Brasil')
 
         const removed = await circulationRepo.remove(updateItem._id)
         assert(removed)
 
         console.log(updateItem)
+
+        const avgFinalists = await circulationRepo.averageFinalists()
+        console.log('Average Finalists', avgFinalists)
+
+        const avgFinalistsByCirculation = await circulationRepo.averageFinalistsByCirculation()
+        console.log('Average By Circulation', avgFinalistsByCirculation)
 
     } catch (error) {
         console.error(error)

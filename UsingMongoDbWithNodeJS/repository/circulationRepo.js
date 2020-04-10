@@ -114,7 +114,70 @@ function circulationRepo() {
         })
     }
 
-    return { loadData, get, getById, addItem, update, remove }
+    function averageFinalists() {
+        return new Promise(async (resolve, reject) => {
+            const client = MongoClient(process.env.MONGODB_URL)
+
+            try {
+                await client.connect()
+                const db = client.db(process.env.MONGODB_DATABASE)
+
+                const result = await db.collection(process.env.COLLECTION)
+                    .aggregate([
+                        {
+                            $group: {
+                                _id: null,
+                                avgFinalists: { $avg: '$Pulitzer Prize Winners and Finalists, 1990-2014' }
+                            }
+                        }
+                    ]).toArray()
+
+                resolve(result[0].avgFinalists)
+                client.close()
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    function averageFinalistsByCirculation() {
+        return new Promise(async (resolve, reject) => {
+            const client = MongoClient(process.env.MONGODB_URL)
+
+            try {
+                await client.connect()
+                const db = client.db(process.env.MONGODB_DATABASE)
+
+                const result = db.collection(process.env.COLLECTION)
+                    .aggregate([
+                        {
+                            $project: {
+                                "Newspaper": 1,
+                                "Pulitzer Prize Winners and Finalists, 1990-2014": 1,
+                                "Change in Daily Circulation, 2004-2013": 1,
+                                overallChange: {
+                                    $cond: { if: { $gte: ["$Change in Daily Circulation, 2004-2013", 0] }, then: "positive", else: "negative" }
+                                }
+                            }
+                        },
+                        {
+                            $group:
+                            {
+                                _id: "$overallChange",
+                                avgFinalists: { $avg: "$Pulitzer Prize Winners and Finalists, 1990-2014" }
+                            }
+                        }
+                    ]).toArray()
+
+                resolve(result)
+                client.close()
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    return { loadData, get, getById, addItem, update, remove, averageFinalists, averageFinalistsByCirculation }
 }
 
 module.exports = circulationRepo()
